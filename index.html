@@ -1,0 +1,103 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portofolio Fairuz Alya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-gradient-to-r from-white to-gray-200 text-black text-center py-12">
+        <h1 class="text-4xl font-bold fade-in">Selamat Datang di Portofolio Fairuz Alya</h1>
+        <p class="mt-2 text-lg fade-in">Hi, saya Fairuz Alya, mahasiswa Universitas Tazkia</p>
+    </header>
+    <nav class="bg-gray-800 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <ul class="flex space-x-6">
+                <li><a href="#tentang" class="hover:bg-white hover:text-black px-4 py-2 rounded transition duration-300">Tentang</a></li>
+                <li><a href="#portofolio" class="hover:bg-white hover:text-black px-4 py-2 rounded transition duration-300">Portofolio</a></li>
+                <li><a href="#kontak" class="hover:bg-white hover:text-black px-4 py-2 rounded transition duration-300">Kontak</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container mx-auto px-4 py-8">
+        <div class="section bg-black p-6 rounded-lg shadow-md mb-8 fade-in" id="tentang">
+            <h2 class="text-2xl font-semibold text-white mb-4">Tentang Saya</h2>
+            <p class="text-gray-200">Saya adalah Fairuz Alya, mahasiswa akuntansi syariah yang bersemangat mempelajari ilmu keuangan berbasis syariah. Saya membuat website ini untuk berbagi karya dan pengalaman saya.</p>
+        </div>
+        <div class="section bg-black p-6 rounded-lg shadow-md mb-8 fade-in" id="portofolio">
+            <h2 class="text-2xl font-semibold text-white mb-4">Portofolio</h2>
+            <p class="text-gray-200 mb-2">Berikut adalah beberapa skill saya:</p>
+            <ul class="list-disc pl-6 text-gray-200">
+                <li>Hard Skill: Akuntansi, Bahasa</li>
+                <li>Soft Skill: Public Speaking, Sikap Positif</li>
+            </ul>
+        </div>
+        <div class="section bg-black p-6 rounded-lg shadow-md mb-8 fade-in" id="kontak">
+            <h2 class="text-2xl font-semibold text-white mb-4">Kontak</h2>
+            <p class="text-gray-200">Nama: Fairuz Alya</p>
+            <p class="text-gray-200">Email: fairuz.manora23@gmail.com</p>
+            <p class="text-gray-200">No. Handphone: 085817145100</p>
+            <p class="text-gray-200">Akun YouTube: Fairuz Manora</p>
+        </div>
+    </div>
+    <footer class="bg-gray-800 text-white text-center py-4">
+        <p>© 2025 Fairuz Alya. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
